@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import ru.golovin.webfluxserver.entity.User;
 import ru.golovin.webfluxserver.exception.AuthException;
-import ru.golovin.webfluxserver.repository.UserRepository;
+import ru.golovin.webfluxserver.service.UserService;
 
 import java.util.*;
 
@@ -17,7 +17,7 @@ import java.util.*;
 @RequiredArgsConstructor
 public class SecurityService {
 
-    private final UserRepository userRepository;
+    private final UserService userService;
     private final PasswordEncoder passwordEncoder;
 
     @Value("${jwt.secret}")
@@ -28,11 +28,11 @@ public class SecurityService {
     private String issuer;
 
     public Mono<TokenDetails> authenticate(String username, String password) {
-        return userRepository
-                .findByUsername(username)
+        return userService
+                .getUserByUsername(username)
                 .flatMap(user -> {
                     if (!user.isEnabled()) return Mono.error(new AuthException("Account disabled", "ACCOUNT_DISABLED"));
-                    if (passwordEncoder.matches(password, user.getPassword()))
+                    if (!passwordEncoder.matches(password, user.getPassword()))
                         return Mono.error(new AuthException("Incorrect password", "INCORRECT_PASSWORD"));
                     return Mono.just(generateToken(user).toBuilder().userId(user.getId()).build());
                 })
@@ -42,6 +42,7 @@ public class SecurityService {
     private TokenDetails generateToken(User user) {
         Map<String, Object> claims = new HashMap<>() {{
             put("role", user.getRole());
+            put("username", user.getUsername());
         }};
         return generateToken(claims, user.getId().toString());
     }

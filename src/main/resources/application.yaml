@@ -19,6 +19,6 @@ jwt:
       iteration: 64
       keyLength: 256
 
-    secret: 5pfwadgmn0ywg7f2de1qfsxmayt8ojsbsdta1ul9tcdwae3qhn4q3144xxycxco0
-    expiration: 3600
-    issuer: serviceWebflux
+  secret: 5pfwadgmn0ywg7f2de1qfsxmayt8ojsbsdta1ul9tcdwae3qhn4q3144xxycxco0
+  expiration: 3600
+  issuer: serviceWebflux

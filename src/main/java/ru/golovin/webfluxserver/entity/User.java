@@ -22,7 +22,7 @@ public class User {
     private String firstName;
     private String lastName;
     private boolean enabled;
-    private LocalDateTime createAt;
+    private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
     @ToString.Include(name = "password")
